@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSE Demo</title>
+</head>
+<body>
+    <h1>Server-Sent Events Demo</h1>
+    <div id="messages"></div>
+    <script>
+        const eventSource = new EventSource('http://localhost:3002/events')
+
+        eventSource.onmessage = function(event) {
+            console.log(JSON.parse(event.data))
+            const eventData = JSON.parse(event.data);
+            const votes = eventData.votes
+
+            Object.keys(votes).forEach(vote => {
+                const element = document.getElementById(vote);
+
+                if (element) {
+                    element.textContent = `${vote}: ${votes[vote]}`
+                } else {
+                    const messageDiv = document.getElementById('messages')
+                    const message = document.createElement('p');
+                    message.id = vote
+                    message.textContent = `${vote}: ${votes[vote]}`
+                    messageDiv.appendChild(message)
+                }
+            })
+            
+        }
+    </script>
+</body>
+</html>
